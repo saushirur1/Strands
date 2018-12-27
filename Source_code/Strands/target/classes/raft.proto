@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package grpc;
+
+message Candidateinfo {
+
+	 int64 term=1;
+	 int64 id=2;
+	 int64 lastlogindex=3;
+	 int64 lastlogterm=4;
+
+}
+
+message Vote {
+	int64 term = 1;
+	bool votegranted = 2;
+
+}
+
+message Followerupdate {
+	int64 id = 1;
+	bool success=2;
+}
+message TermEntry{
+    int64 term=1;
+}
+message UpdateEntry {
+	int64 leaderterm = 1;
+	string leaderIp=2;
+	int64 id=3;
+	int64 prevLogIndex=4;
+	int64 prevLogTerm=5;
+	repeated TermEntry entries=6;
+	int64 leaderCommitIndex=7;
+}
+
+service RaftService {
+    rpc Startcontending (Candidateinfo) returns (Vote);
+    rpc Appendentries (UpdateEntry) returns (Followerupdate);
+}

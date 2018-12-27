@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package grpc;
+
+message NsFileInfo {
+    string fileName = 1;		// teamname_fileid (unique)
+}
+
+message FileChunkInfo {
+    string fileName = 1;
+    int64 maxChunks = 2;
+    repeated string chunks = 3;
+    bool isFileFound = 4;
+}
+
+message FileResult
+{
+    bool fileFound = 1;
+    int64 maxChunks = 2;
+}
+
+message DataCenterID {
+    int32 dcId = 1;
+}
+message NameServerAprooved {
+    bool nsGot = 1;
+}
+
+message UpdateMap {
+    string fileName = 1;
+    string dataCenters=2;
+}
+
+service DataCenterService
+{
+
+    // From team's client to team's own cluster
+    rpc DataCenterHB (DataCenterID) returns (NameServerAprooved);
+
+    // From team-1 cluster to rest of the nodes of other teams
+    rpc GetChunkDetails (NsFileInfo) returns (FileChunkInfo);
+
+    rpc UpdateBackUpNS (UpdateMap) returns(NameServerAprooved);
+
+    rpc FileExists(NsFileInfo) returns (FileResult);
+
+}
